@@ -1,1 +1,4 @@
 node_modules
+blender
+/dist/client/models/bar.glb
+blender/bar.blend
