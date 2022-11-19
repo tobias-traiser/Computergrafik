@@ -1,5 +1,9 @@
 # Computergrafik
 
+## Dokumentation
+https://docs.google.com/document/d/12V_jWPeYpEgFmhWb3eMV4BNnxkivuPQCK8yw3AZLysY/edit?usp=sharing
+
+
 ## Voraussetzungen:
 - Installation von node package manager muss vorhanden sein
 
