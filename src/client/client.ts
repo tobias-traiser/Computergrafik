@@ -16,6 +16,8 @@ let prevTime = performance.now();
 const velocity = new THREE.Vector3();
 const direction = new THREE.Vector3();
 
+let slotMachineRoles: (THREE.Object3D<THREE.Event> | undefined)[] = [];
+let barSeats: (THREE.Object3D<THREE.Event> | undefined)[] = [];
 
 init();
 function init(){
@@ -26,6 +28,21 @@ function init(){
         document.getElementById("info")!.hidden = true
         document.getElementById("blocker")!.hidden = false
         scene.add( gltf.scene );
+        //console.log(gltf.scene.getObjectByName("SpielautomatRolle1"))
+        slotMachineRoles.push( gltf.scene.getObjectByName("SpielautomatRolle1"),
+            gltf.scene.getObjectByName("SpielautomatRolle2"),
+            gltf.scene.getObjectByName("SpielautomatRolle3"));
+
+        barSeats.push( gltf.scene.getObjectByName("Bar Stühle"),
+            gltf.scene.getObjectByName("Bar Stühle.001"),
+            gltf.scene.getObjectByName("Bar Stühle.002"),
+            gltf.scene.getObjectByName("Bar Stühle.003"));
+
+        gltf.scene.getObjectByName("Floor")!.receiveShadow = true
+        gltf.scene.getObjectByName("Bartresen")!.receiveShadow = true
+        gltf.scene.getObjectByName("Bartresen")!.castShadow = true
+
+
 
         //gltf.animations; // Array<THREE.AnimationClip>
         //gltf.scene; // THREE.Group
@@ -40,6 +57,10 @@ function init(){
 
     } );
 
+    barSeats.forEach( object => {
+        object!.castShadow = true;
+        object!.receiveShadow = true
+    })
 
 
 
@@ -47,17 +68,34 @@ function init(){
     camera.position.set(0,5,40)
     //scene.background= new THREE.Color( 0xffffff );
 
-    const light = new THREE.PointLight( 0xFFFFFF, 20, 100 );
-    light.position.set( 50, 50, 50 );
+    const light = new THREE.PointLight( 0xFFFFFF, 2, 100 );
+    light.position.set( 0, 20, 0 );
+    light.castShadow = true;
     scene.add( light );
 
+    //Set up shadow properties for the light
+    light.shadow.mapSize.width = 512; // default
+    light.shadow.mapSize.height = 512; // default
+    light.shadow.camera.near = 0.5; // default
+    light.shadow.camera.far = 500; // default
 
+    //Create a helper for the shadow camera (optional)
+    const helper = new THREE.CameraHelper( light.shadow.camera );
+    scene.add( helper );
 
 
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     document.body.appendChild( renderer.domElement );
+
+    /*var plane = new THREE.Mesh(new THREE.PlaneGeometry(50,50), new THREE.MeshStandardMaterial( {color: 0x00ff00 }));
+    plane.castShadow = false;
+    plane.receiveShadow = true;
+    plane.position.set(0, 0, -6);
+    scene.add(plane);*/
 
     window.addEventListener( 'resize', onWindowResize );
 
@@ -180,7 +218,7 @@ function animate() {
         direction.normalize(); // this ensures consistent movements in all directions
 
         if ( moveForward || moveBackward ) velocity.z -= direction.z * 8.0 * delta;
-        console.log(velocity)
+
         if ( moveLeft || moveRight ) velocity.x -= direction.x * 8.0 * delta;
 
 
@@ -202,6 +240,13 @@ function animate() {
 
         prevTime = time;
 
+
+
+        //animate slot machine
+
+        slotMachineRoles[0]?.rotateY(delta + Math.random() / 10)
+        slotMachineRoles[1]?.rotateY(delta + Math.random() / 10)
+        slotMachineRoles[2]?.rotateY(delta + Math.random() / 10)
     }
     render()
 }
