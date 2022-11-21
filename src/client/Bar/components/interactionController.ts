@@ -1,5 +1,8 @@
 import {Raycaster, Vector2, Vector3} from "three";
 
+/**
+ * this class helps with the interaction with objects
+ */
 class InteractionController {
     raycaster;
     camera;
@@ -16,13 +19,15 @@ class InteractionController {
         this.pointer = new Vector2(0, 0);
     }
 
+    /**
+     * checks if an interaction is now possible
+     */
     checkInteractions() {
         this.raycaster.setFromCamera(this.pointer, this.camera);
         const intersects = this.raycaster.intersectObjects(this.interactionObjects, false);
         console.log(intersects)
         // range intersection
         if (intersects.length > 0) {
-            console.log("hier")
             const object = intersects[0];
 
             if (object && object.object) {

@@ -2,7 +2,7 @@ import {Vector3} from "three";
 import * as THREE from "three";
 
 /**
- * Create the SpotLight
+ * Create the Point Light
  * @param {THREE.Vector3} position
  * @returns THREE.SpotLight
  */

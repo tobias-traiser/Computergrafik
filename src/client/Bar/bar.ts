@@ -8,6 +8,9 @@ import {AnimationController} from "./components/animationController";
 import {SlotMachine} from "./components/slotMachine";
 import {InteractionController} from "./components/interactionController";
 
+/**
+ * This is the Bar
+ */
 class Bar {
     camera;
     renderer;
@@ -20,6 +23,9 @@ class Bar {
 
     barSeats: THREE.Object3D<THREE.Event>[] = [];
 
+    /**
+     * initialising the needed objects for the bar
+     */
     constructor() {
 
         this.camera = createCamera(new Vector3(0,5,40));
@@ -33,12 +39,9 @@ class Bar {
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         document.body.appendChild(this.renderer.domElement);
 
-
-
         this.interactionController = new InteractionController(this.camera)
 
         this.slotMachine = new SlotMachine()
-
 
         this.animationController = new AnimationController(this.camera, this.renderer, this.scene, this)
         this.animationController.animatedObjects.push(this.slotMachine)
@@ -49,6 +52,9 @@ class Bar {
         window.addEventListener('resize', this.onWindowResize);
     }
 
+    /**
+     * updates the program if window resized
+     */
     onWindowResize() {
 
         this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -58,6 +64,9 @@ class Bar {
 
     }
 
+    /**
+     * load the models from glb file
+     */
     async init() {
         const loader = new GLTFLoader();
         loader.load('models/bar.glb', (gltf) => {
@@ -86,7 +95,8 @@ class Bar {
             //gltf.scenes; // Array<THREE.Group>
             //gltf.cameras; // Array<THREE.Camera>
             //gltf.asset; // Object
-            this.interactionController.interactionObjects.push(gltf.scene.getObjectByName("Floor"))
+            gltf.scene.children.forEach(object => this.interactionController.interactionObjects.push(object))
+            //this.interactionController.interactionObjects.push(gltf.scene.children)//gltf.scene.getObjectByName("Floor"))
             console.log(this.scene.children)
 
 
@@ -103,6 +113,9 @@ class Bar {
 
     }
 
+    /**
+     * updates the scene every frame
+     */
     render(){
         this.interactionController.checkInteractions()
         this.movementController.updateCamera()
@@ -110,7 +123,9 @@ class Bar {
     }
 
 
-
+    /**
+     * starts the animation
+     */
     start() {
         this.animationController.start()
     }

@@ -3,6 +3,9 @@ import {Camera} from "three";
 import * as THREE from "three";
 import {AnimationController} from "./animationController";
 
+/**
+ * Control the camera movement
+ */
 class MovementController{
 
     animationController;
@@ -19,6 +22,11 @@ class MovementController{
     prevTime;
     direction;
 
+    /**
+     * @param camera
+     * @param scene
+     * @param animationController
+     */
     constructor(camera: THREE.Camera, scene: THREE.Scene, animationController: AnimationController) {
         this.moveLeft = false;
         this.moveRight = false;
@@ -37,7 +45,9 @@ class MovementController{
         this.direction = new THREE.Vector3();
     }
 
-
+    /**
+     * gets Keyboard events and locks or unlocks the mouse
+     */
     camMov() {
         const onKeyDown = (event: { code: any; }) => {
 
@@ -118,14 +128,14 @@ class MovementController{
 
             instructions.style.display = 'none';
             blocker.style.display = 'none';
-
+            this.animationController.start();
         });
 
         this.controls.addEventListener('unlock', () => {
 
             blocker.style.display = 'block';
             instructions.style.display = '';
-            this.animationController.stop()
+            this.animationController.stop();
 
         });
 
@@ -134,6 +144,9 @@ class MovementController{
         document.addEventListener('keyup', onKeyUp);
     }
 
+    /**
+     * updates the position of the camera
+     */
     updateCamera() {
 
         if ( this.controls.isLocked ) {
