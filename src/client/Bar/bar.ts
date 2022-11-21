@@ -44,12 +44,12 @@ class Bar {
         this.slotMachine = new SlotMachine()
 
         this.animationController = new AnimationController(this.camera, this.renderer, this.scene, this)
-        this.animationController.animatedObjects.push(this.slotMachine)
+        //this.animationController.animatedObjects.push(this.slotMachine)
 
         this.movementController = new MovementController(this.camera, this.scene, this.animationController)
         this.movementController.camMov()
 
-        window.addEventListener('resize', this.onWindowResize);
+        window.addEventListener('resize', this.onWindowResize.bind(this));
     }
 
     /**
@@ -60,8 +60,8 @@ class Bar {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
 
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-
+        this.renderer.setSize(window.innerWidth , window.innerHeight);
+        this.renderer.setPixelRatio(window.devicePixelRatio);
     }
 
     /**
@@ -78,6 +78,8 @@ class Bar {
                 gltf.scene.getObjectByName("SpielautomatRolle2"),
                 gltf.scene.getObjectByName("SpielautomatRolle3"));
 
+            this.slotMachine.slotMachineHandle = gltf.scene.getObjectByName("Sphere")
+            console.log(this.slotMachine.slotMachineHandle)
             this.barSeats.push( gltf.scene.getObjectByName("Bar_Stühle")!, //erstes obj so nicht, nur in einzelteilen
                 gltf.scene.getObjectByName("Bar_Stühle001")!,
                 gltf.scene.getObjectByName("Bar_Stühle002")!,
@@ -95,9 +97,23 @@ class Bar {
             //gltf.scenes; // Array<THREE.Group>
             //gltf.cameras; // Array<THREE.Camera>
             //gltf.asset; // Object
-            gltf.scene.children.forEach(object => this.interactionController.interactionObjects.push(object))
+//            gltf.scene.children.forEach(object => this.interactionController.interactionObjects.push(object))
             //this.interactionController.interactionObjects.push(gltf.scene.children)//gltf.scene.getObjectByName("Floor"))
             console.log(this.scene.children)
+
+
+            // slot machine
+            const slotMachineInteraction = (ev: { code: any; } ) => {
+                switch (ev.code) {
+                    case 'KeyE':
+                        this.interactionController.removeInteraction(this.slotMachine.slotMachineHandle!);
+
+                        this.animationController.animatedObjects.push(this.slotMachine);
+                        this.setText("&#8977;");
+                }
+            };
+            this.interactionController.addInteraction(this.slotMachine.slotMachineHandle!, this.slotMachine.setText, "keydown", slotMachineInteraction);
+
 
 
         }, undefined, function (error) {
@@ -111,6 +127,8 @@ class Bar {
         const helper = new THREE.CameraHelper( this.light.shadow.camera );
         this.scene.add( helper );
 
+
+
     }
 
     /**
@@ -120,6 +138,15 @@ class Bar {
         this.interactionController.checkInteractions()
         this.movementController.updateCamera()
         this.renderer.render(this.scene, this.camera);
+    }
+
+    /**
+     * Sets interaction text
+     * @param {String} text the text to show
+     */
+    setText(text: string) {
+        let div = document.getElementById("point")!;
+        div.innerHTML = text;
     }
 
 
