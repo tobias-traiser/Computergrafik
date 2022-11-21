@@ -3,16 +3,26 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Three.js TypeScript Tutorials by Sean Bradley : https://sbcode.net/threejs</title>
-        <style>
-            body {
-                overflow: hidden;
-                margin: 0px;
-            }
-        </style>
+        <title>Three.js Bar</title>
+        <link type="text/css" rel="stylesheet" href="style.css">
     </head>
 
     <body>
-        <script type="module" src="bundle.js"></script>
+    <div id="info">Loading</div>
+    <div id="blocker" hidden>
+
+        <div id="instructions">
+            <p style="font-size:36px">
+                Click to play
+            </p>
+            <p>
+                Move: WASD<br/>
+                Jump: SPACE<br/>
+                Look: MOUSE
+            </p>
+        </div>
+    </div>
+    <div id="point">&#8977;</div>
+    <script type="module" src="bundle.js"></script>
     </body>
 </html>
