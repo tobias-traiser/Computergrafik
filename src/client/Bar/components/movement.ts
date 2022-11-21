@@ -203,6 +203,21 @@ class MovementController{
 
             }
 
+            if (this.controls.getObject().position.x>16.9){
+                this.controls.getObject().position.x=16.9
+            }
+
+            if (this.controls.getObject().position.x<-16.9){
+                this.controls.getObject().position.x=-16.9
+            }
+
+            if (this.controls.getObject().position.y>16.5){
+                this.controls.getObject().position.y=16.5
+            }
+
+            if (this.controls.getObject().position.y<-16.5){
+                this.controls.getObject().position.y=-16.5
+            }
 
 
             this.prevTime = time;
@@ -236,30 +251,8 @@ class MovementController{
             append(object);
         }
 
-
-
     }
 
-
-    checkBottomTopCollision() {
-
-        this.raycasterY.set(this.camera.position.clone(), new Vector3(0, -1, 0));
-        const intersectionsBottom = this.raycasterY.intersectObjects(this.objectCollision, true);
-
-        if (intersectionsBottom.length > 0) {
-            const distance = intersectionsBottom[0].distance;
-            this.camera.position.clone().y += this.camera.position.y - distance;
-            this.velocity.y = Math.max(0, this.velocity.y);
-        }
-
-        this.raycasterY.set(this.camera.position.clone(), new Vector3(0, 1, 0));
-        const intersectionsTop = this.raycasterY.intersectObjects(this.objectCollision, true);
-
-        if (intersectionsTop.length > 0) {
-            this.velocity.y = 0;
-        }
-
-    }
 
 
 }

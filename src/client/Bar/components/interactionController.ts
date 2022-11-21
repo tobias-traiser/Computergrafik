@@ -1,6 +1,5 @@
 import {Event, Object3D, Raycaster, Vector2, Vector3} from "three";
 
-
 /**
  * this class helps with the interaction with objects
  */
@@ -33,7 +32,7 @@ class InteractionController {
      * @param event
      * @param eventFunction
      */
-    addInteraction(object: Object3D, interactionFunction: () => void, event: string, eventFunction: any ) {
+    addInteraction(object: Object3D<Event>, interactionFunction: () => void, event: string, eventFunction: any ) {
         this.interactionObjects.push(object);
         this.interactionFunctions.set(object.uuid, interactionFunction)
         this.eventFunctions.set(object.uuid, {"event": event, "eventFunction": eventFunction, "activated": false})
@@ -43,7 +42,7 @@ class InteractionController {
      * disable to interact with an object
      * @param object
      */
-    removeInteraction(object: Object3D) {
+    removeInteraction(object: Object3D<Event>) {
 
         this.interactionFunctions.delete(object.uuid)
         this.eventFunctions.delete(object.uuid)

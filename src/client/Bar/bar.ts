@@ -7,7 +7,6 @@ import {MovementController} from "./components/movement";
 import {AnimationController} from "./components/animationController";
 import {SlotMachine} from "./components/slotMachine";
 import {InteractionController} from "./components/interactionController";
-import {Can} from "./components/can";
 
 /**
  * This is the Bar
@@ -23,7 +22,6 @@ class Bar {
     slotMachine;
 
     seats: THREE.Object3D<THREE.Event>[] = [];
-    can;
 
     /**
      * initialising the needed objects for the bar
@@ -51,7 +49,6 @@ class Bar {
         this.movementController = new MovementController(this.camera, this.scene, this.animationController)
         this.movementController.camMov()
 
-        this.can = new Can()
         window.addEventListener('resize', this.onWindowResize.bind(this));
     }
 
@@ -112,17 +109,6 @@ class Bar {
             gltf.scene.getObjectByName("Spielautomat_Basis")!.castShadow = true
             gltf.scene.getObjectByName("deckenBarStein")!.castShadow = true
 
-          //  this.dose = gltf.scene.getObjectByName("Can")
-
-                //ddocument.addEventListener("click", objectClicked)
-            //gltf.animations; // Array<THREE.AnimationClip>
-            //gltf.scene; // THREE.Group
-            //gltf.scenes; // Array<THREE.Group>
-            //gltf.cameras; // Array<THREE.Camera>
-            //gltf.asset; // Object
-
-            console.log(this.scene.children)
-
             this.scene.children.forEach(object=>{this.movementController.addObjectCollision(object)})
 
 
@@ -140,7 +126,6 @@ class Bar {
                 }
             };
             this.interactionController.addInteraction(this.slotMachine.slotMachineHandle!, this.slotMachine.setText, "keydown", slotMachineInteraction);
-
 
 
         }, undefined, function (error) {
