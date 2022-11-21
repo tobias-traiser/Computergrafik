@@ -103,11 +103,10 @@ class Bar {
 
 
             // slot machine
-            const slotMachineInteraction = (ev: { code: any; } ) => {
+            const slotMachineInteraction = (ev: KeyboardEvent ) => {
                 switch (ev.code) {
                     case 'KeyE':
                         this.interactionController.removeInteraction(this.slotMachine.slotMachineHandle!);
-
                         this.animationController.animatedObjects.push(this.slotMachine);
                         this.setText("&#8977;");
                 }
