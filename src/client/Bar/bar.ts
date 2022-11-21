@@ -21,7 +21,7 @@ class Bar {
     interactionController;
     slotMachine;
 
-    barSeats: THREE.Object3D<THREE.Event>[] = [];
+    seats: THREE.Object3D<THREE.Event>[] = [];
 
     /**
      * initialising the needed objects for the bar
@@ -30,7 +30,7 @@ class Bar {
 
         this.camera = createCamera(new Vector3(0,5,40));
         this.scene = new THREE.Scene();
-        this.light = createPointLight(new Vector3(0, 20, 0))
+        this.light = createPointLight(new Vector3(0, 5, 0))
 
         this.renderer = new THREE.WebGLRenderer({powerPreference: "high-performance", antialias: true});
         this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -80,18 +80,40 @@ class Bar {
 
             this.slotMachine.slotMachineHandle = gltf.scene.getObjectByName("Sphere")
             console.log(this.slotMachine.slotMachineHandle)
-            this.barSeats.push( gltf.scene.getObjectByName("Bar_Stühle")!, //erstes obj so nicht, nur in einzelteilen
+            this.seats.push( gltf.scene.getObjectByName("BarSeat1")!,
                 gltf.scene.getObjectByName("Bar_Stühle001")!,
                 gltf.scene.getObjectByName("Bar_Stühle002")!,
-                gltf.scene.getObjectByName("Bar_Stühle003")!);
+                gltf.scene.getObjectByName("Bar_Stühle003")!,
+                gltf.scene.getObjectByName("chair1")!,
+                gltf.scene.getObjectByName("chair2")!,
+                gltf.scene.getObjectByName("chair3")!);
+
+            this.seats.forEach(seat =>{
+                seat.traverse( (child) =>{
+                        child.castShadow=true
+                    })
+
+            })
+
+
+            gltf.scene.getObjectByName("tablepart1")!.castShadow = true
+            gltf.scene.getObjectByName("tablepart2")!.castShadow = true
+
 
             gltf.scene.getObjectByName("Floor")!.receiveShadow = true
-            gltf.scene.getObjectByName("Bartresen")!.receiveShadow = true
+            gltf.scene.getObjectByName("LeftWall")!.receiveShadow = true
+            gltf.scene.getObjectByName("rightWall")!.receiveShadow = true
+            gltf.scene.getObjectByName("BackWall")!.receiveShadow = true
+
+            //gltf.scene.getObjectByName("Bartresen")!.receiveShadow = true
             gltf.scene.getObjectByName("Bartresen")!.castShadow = true
-            gltf.scene.getObjectByName("Bartresen")!.addEventListener("click", () => {
-                console.log("bar clicked")
-            })
-            //ddocument.addEventListener("click", objectClicked)
+            gltf.scene.getObjectByName("Spielautomat_Basis")!.receiveShadow = true
+            gltf.scene.getObjectByName("Spielautomat_Basis")!.castShadow = true
+            gltf.scene.getObjectByName("deckenBarStein")!.castShadow = true
+
+
+
+                //ddocument.addEventListener("click", objectClicked)
             //gltf.animations; // Array<THREE.AnimationClip>
             //gltf.scene; // THREE.Group
             //gltf.scenes; // Array<THREE.Group>
@@ -109,6 +131,10 @@ class Bar {
                         this.interactionController.removeInteraction(this.slotMachine.slotMachineHandle!);
                         this.animationController.animatedObjects.push(this.slotMachine);
                         this.setText("&#8977;");
+                        setTimeout(()=>{ this.animationController.animatedObjects.pop();
+                            this.interactionController.addInteraction(this.slotMachine.slotMachineHandle!, this.slotMachine.setText, "keydown", slotMachineInteraction);
+                        } , 7000)
+
                 }
             };
             this.interactionController.addInteraction(this.slotMachine.slotMachineHandle!, this.slotMachine.setText, "keydown", slotMachineInteraction);
