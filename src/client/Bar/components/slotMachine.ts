@@ -1,4 +1,4 @@
-import * as THREE from "three";
+//import * as THREE from "three";
 
 /**
  * this is a slot machine

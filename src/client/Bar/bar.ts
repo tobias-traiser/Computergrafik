@@ -7,6 +7,7 @@ import {MovementController} from "./components/movement";
 import {AnimationController} from "./components/animationController";
 import {SlotMachine} from "./components/slotMachine";
 import {InteractionController} from "./components/interactionController";
+import {Can} from "./components/can";
 
 /**
  * This is the Bar
@@ -22,15 +23,16 @@ class Bar {
     slotMachine;
 
     seats: THREE.Object3D<THREE.Event>[] = [];
+    can;
 
     /**
      * initialising the needed objects for the bar
      */
     constructor() {
 
-        this.camera = createCamera(new Vector3(0,5,40));
+        this.camera = createCamera(new Vector3(0,7,15));
         this.scene = new THREE.Scene();
-        this.light = createPointLight(new Vector3(0, 5, 0))
+        this.light = createPointLight(new Vector3(0, 15, 0))
 
         this.renderer = new THREE.WebGLRenderer({powerPreference: "high-performance", antialias: true});
         this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -44,11 +46,12 @@ class Bar {
         this.slotMachine = new SlotMachine()
 
         this.animationController = new AnimationController(this.camera, this.renderer, this.scene, this)
-        //this.animationController.animatedObjects.push(this.slotMachine)
+
 
         this.movementController = new MovementController(this.camera, this.scene, this.animationController)
         this.movementController.camMov()
 
+        this.can = new Can()
         window.addEventListener('resize', this.onWindowResize.bind(this));
     }
 
@@ -99,19 +102,17 @@ class Bar {
             gltf.scene.getObjectByName("tablepart1")!.castShadow = true
             gltf.scene.getObjectByName("tablepart2")!.castShadow = true
 
-
             gltf.scene.getObjectByName("Floor")!.receiveShadow = true
             gltf.scene.getObjectByName("LeftWall")!.receiveShadow = true
             gltf.scene.getObjectByName("rightWall")!.receiveShadow = true
             gltf.scene.getObjectByName("BackWall")!.receiveShadow = true
 
-            //gltf.scene.getObjectByName("Bartresen")!.receiveShadow = true
             gltf.scene.getObjectByName("Bartresen")!.castShadow = true
             gltf.scene.getObjectByName("Spielautomat_Basis")!.receiveShadow = true
             gltf.scene.getObjectByName("Spielautomat_Basis")!.castShadow = true
             gltf.scene.getObjectByName("deckenBarStein")!.castShadow = true
 
-
+          //  this.dose = gltf.scene.getObjectByName("Can")
 
                 //ddocument.addEventListener("click", objectClicked)
             //gltf.animations; // Array<THREE.AnimationClip>
@@ -119,9 +120,10 @@ class Bar {
             //gltf.scenes; // Array<THREE.Group>
             //gltf.cameras; // Array<THREE.Camera>
             //gltf.asset; // Object
-//            gltf.scene.children.forEach(object => this.interactionController.interactionObjects.push(object))
-            //this.interactionController.interactionObjects.push(gltf.scene.children)//gltf.scene.getObjectByName("Floor"))
+
             console.log(this.scene.children)
+
+            this.scene.children.forEach(object=>{this.movementController.addObjectCollision(object)})
 
 
             // slot machine
@@ -148,12 +150,6 @@ class Bar {
         });
 
         this.scene.add(this.light);
-
-        const helper = new THREE.CameraHelper( this.light.shadow.camera );
-        this.scene.add( helper );
-
-
-
     }
 
     /**
@@ -162,6 +158,7 @@ class Bar {
     render(){
         this.interactionController.checkInteractions()
         this.movementController.updateCamera()
+        //this.movementController.checkBottomTopCollision()
         this.renderer.render(this.scene, this.camera);
     }
 

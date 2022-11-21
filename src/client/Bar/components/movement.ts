@@ -1,7 +1,7 @@
 import {PointerLockControls} from "three/examples/jsm/controls/PointerLockControls";
-import {Camera} from "three";
 import * as THREE from "three";
 import {AnimationController} from "./animationController";
+import {Raycaster, Vector3} from "three";
 
 /**
  * Control the camera movement
@@ -21,6 +21,10 @@ class MovementController{
     velocity;
     prevTime;
     direction;
+
+    objectCollision: any[];
+    raycasterY;
+    raycaster;
 
     /**
      * @param camera
@@ -43,6 +47,10 @@ class MovementController{
         this.prevTime = performance.now();
         this.velocity = new THREE.Vector3();
         this.direction = new THREE.Vector3();
+
+        this.objectCollision = [];
+        this.raycasterY = new Raycaster(this.camera.position.clone(), new Vector3(0, -1, 0), 0, this.camera.position.y);
+        this.raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 3 );
     }
 
     /**
@@ -166,27 +174,93 @@ class MovementController{
 
             if ( this.moveLeft || this.moveRight ) this.velocity.x -= this.direction.x * 8.0 * delta;
 
+            this.raycaster.ray.origin.copy( this.controls.getObject().position );
+            this.raycaster.ray.origin.y -= 3;
 
+            const intersections = this.raycaster.intersectObjects( this.objectCollision, true );
+
+            const onObject = intersections.length > 0;
             //velocity.y = Math.max( 0, velocity.y );
 
+            if ( onObject ) {
+
+                this.velocity.y = Math.max( 0, this.velocity.y );
+                this.canJump = true;
+
+            }
             this.controls.moveRight(-this.velocity.x);//* delta
 
             this.controls.moveForward(-this.velocity.z);//* delta
             this.controls.getObject().position.y += ( this.velocity.y * delta );
 
+
             if ( this.controls.getObject().position.y < 5 ) {
 
                 this.velocity.y = 0;
-                this.controls.getObject().position.y = 5;
+                this.controls.getObject().position.y = 7;
 
                 this.canJump = true;
 
             }
 
+
+
             this.prevTime = time;
         }
 
+
+
+
     }
+
+    /**
+     * detect collision
+     * @param {THREE.Object3D} object
+     */
+    addObjectCollision(object: THREE.Object3D) {
+        const append = (item: any) => {
+            if (this.objectCollision.indexOf(item) == -1) {
+                this.objectCollision.push(item);
+            }
+            else {
+                console.error("Object alreqdy in", item);
+            }
+        };
+
+        if (Array.isArray(object)) {
+            object.forEach(item => {
+                append(item);
+            });
+        }
+        else {
+            append(object);
+        }
+
+
+
+    }
+
+
+    checkBottomTopCollision() {
+
+        this.raycasterY.set(this.camera.position.clone(), new Vector3(0, -1, 0));
+        const intersectionsBottom = this.raycasterY.intersectObjects(this.objectCollision, true);
+
+        if (intersectionsBottom.length > 0) {
+            const distance = intersectionsBottom[0].distance;
+            this.camera.position.clone().y += this.camera.position.y - distance;
+            this.velocity.y = Math.max(0, this.velocity.y);
+        }
+
+        this.raycasterY.set(this.camera.position.clone(), new Vector3(0, 1, 0));
+        const intersectionsTop = this.raycasterY.intersectObjects(this.objectCollision, true);
+
+        if (intersectionsTop.length > 0) {
+            this.velocity.y = 0;
+        }
+
+    }
+
 
 }
 

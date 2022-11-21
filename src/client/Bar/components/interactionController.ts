@@ -1,5 +1,5 @@
 import {Event, Object3D, Raycaster, Vector2, Vector3} from "three";
-import {int} from "three/examples/jsm/nodes/shadernode/ShaderNodeBaseElements";
+
 
 /**
  * this class helps with the interaction with objects

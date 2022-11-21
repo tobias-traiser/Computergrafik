@@ -1,5 +1,5 @@
 import {Vector3} from "three";
-import * as THREE from "three";
+import THREE = require("three");
 
 /**
  * Create the Point Light
