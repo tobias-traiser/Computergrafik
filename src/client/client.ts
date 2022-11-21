@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {PointerLockControls} from "three/examples/jsm/controls/PointerLockControls";
+import {Raycaster} from "three";
+
 
 let camera: THREE.PerspectiveCamera, scene: THREE.Scene, renderer: THREE.WebGLRenderer, controls: PointerLockControls;
 const loader = new GLTFLoader();
@@ -17,9 +19,12 @@ const velocity = new THREE.Vector3();
 const direction = new THREE.Vector3();
 
 let slotMachineRoles: (THREE.Object3D<THREE.Event> | undefined)[] = [];
-let barSeats: (THREE.Object3D<THREE.Event> | undefined)[] = [];
+let barSeats: THREE.Object3D<THREE.Event>[] = [];
 
 init();
+
+
+
 function init(){
     camera = new THREE.PerspectiveCamera();
     scene = new THREE.Scene();
@@ -33,22 +38,22 @@ function init(){
             gltf.scene.getObjectByName("SpielautomatRolle2"),
             gltf.scene.getObjectByName("SpielautomatRolle3"));
 
-        barSeats.push( gltf.scene.getObjectByName("Bar Stühle"),
-            gltf.scene.getObjectByName("Bar Stühle.001"),
-            gltf.scene.getObjectByName("Bar Stühle.002"),
-            gltf.scene.getObjectByName("Bar Stühle.003"));
+        barSeats.push( gltf.scene.getObjectByName("Bar_Stühle")!, //erstes obj so nicht, nur in einzelteilen
+            gltf.scene.getObjectByName("Bar_Stühle001")!,
+            gltf.scene.getObjectByName("Bar_Stühle002")!,
+            gltf.scene.getObjectByName("Bar_Stühle003")!);
 
         gltf.scene.getObjectByName("Floor")!.receiveShadow = true
         gltf.scene.getObjectByName("Bartresen")!.receiveShadow = true
         gltf.scene.getObjectByName("Bartresen")!.castShadow = true
-
-
-
+        gltf.scene.getObjectByName("Bartresen")!.addEventListener("click",()=> {console.log("bar clicked")})
+        //ddocument.addEventListener("click", objectClicked)
         //gltf.animations; // Array<THREE.AnimationClip>
         //gltf.scene; // THREE.Group
         //gltf.scenes; // Array<THREE.Group>
         //gltf.cameras; // Array<THREE.Camera>
         //gltf.asset; // Object
+        console.log(scene.children)
 
 
     }, undefined, function ( error ) {
@@ -132,6 +137,10 @@ function init(){
                 canJump = false;
                 break;
 
+            case 'KeyE':
+                interact(barSeats[1])
+                break;
+
         }
 
     };
@@ -180,6 +189,8 @@ function init(){
 
     } );
 
+
+
     controls.addEventListener( 'unlock', function () {
 
         blocker.style.display = 'block';
@@ -200,6 +211,23 @@ function onWindowResize() {
     renderer.setSize( window.innerWidth, window.innerHeight );
 
 }
+const raycaster = new THREE.Raycaster();
+function interact(object: THREE.Object3D<THREE.Event>) {
+    //console.log(barSeats)
+    //let distance = controls.getObject().position.distanceTo(object.position)
+
+    //raycaster.set( new THREE.Vector3(1, 0, 0), camera.position );
+    raycaster.setFromCamera(new THREE.Vector2(window.innerWidth/2, window.innerHeight/2).normalize(), camera);
+    console.log(new THREE.Vector2(window.innerWidth/2, window.innerHeight/2))
+    const intersects = raycaster.intersectObjects(scene.children, true);
+
+    if (intersects.length > 0) {
+
+        console.log(intersects[0].object.name);
+    }
+}
+
+
 
 function animate() {
     requestAnimationFrame(animate)
