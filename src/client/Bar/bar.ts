@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import {PointerLockControls} from "three/examples/jsm/controls/PointerLockControls";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {createCamera} from "./components/camera";
 import {Vector3} from "three";
@@ -7,6 +6,7 @@ import {createPointLight} from "./components/light";
 import {MovementController} from "./components/movement";
 import {AnimationController} from "./components/animationController";
 import {SlotMachine} from "./components/slotMachine";
+import {InteractionController} from "./components/interactionController";
 
 class Bar {
     camera;
@@ -15,6 +15,7 @@ class Bar {
     light;
     movementController;
     animationController;
+    interactionController;
     slotMachine;
 
     barSeats: THREE.Object3D<THREE.Event>[] = [];
@@ -32,15 +33,18 @@ class Bar {
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         document.body.appendChild(this.renderer.domElement);
 
-        this.movementController = new MovementController(this.camera, this.scene)
-        this.movementController.camMov()
 
+
+        this.interactionController = new InteractionController(this.camera)
 
         this.slotMachine = new SlotMachine()
 
 
         this.animationController = new AnimationController(this.camera, this.renderer, this.scene, this)
         this.animationController.animatedObjects.push(this.slotMachine)
+
+        this.movementController = new MovementController(this.camera, this.scene, this.animationController)
+        this.movementController.camMov()
 
         window.addEventListener('resize', this.onWindowResize);
     }
@@ -82,6 +86,7 @@ class Bar {
             //gltf.scenes; // Array<THREE.Group>
             //gltf.cameras; // Array<THREE.Camera>
             //gltf.asset; // Object
+            this.interactionController.interactionObjects.push(gltf.scene.getObjectByName("Floor"))
             console.log(this.scene.children)
 
 
@@ -99,6 +104,7 @@ class Bar {
     }
 
     render(){
+        this.interactionController.checkInteractions()
         this.movementController.updateCamera()
         this.renderer.render(this.scene, this.camera);
     }

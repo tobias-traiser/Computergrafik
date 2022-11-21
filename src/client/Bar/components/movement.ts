@@ -1,9 +1,11 @@
 import {PointerLockControls} from "three/examples/jsm/controls/PointerLockControls";
 import {Camera} from "three";
 import * as THREE from "three";
+import {AnimationController} from "./animationController";
 
 class MovementController{
 
+    animationController;
     controls: PointerLockControls;
     moveLeft;
     moveRight;
@@ -17,7 +19,7 @@ class MovementController{
     prevTime;
     direction;
 
-    constructor(camera: THREE.Camera, scene: THREE.Scene) {
+    constructor(camera: THREE.Camera, scene: THREE.Scene, animationController: AnimationController) {
         this.moveLeft = false;
         this.moveRight = false;
         this.moveForward = false;
@@ -28,6 +30,7 @@ class MovementController{
         this.camera = camera
 
         this.controls = new PointerLockControls(this.camera, document.body);
+        this.animationController = animationController
 
         this.prevTime = performance.now();
         this.velocity = new THREE.Vector3();
@@ -122,6 +125,7 @@ class MovementController{
 
             blocker.style.display = 'block';
             instructions.style.display = '';
+            this.animationController.stop()
 
         });
 
@@ -144,7 +148,7 @@ class MovementController{
             this.direction.z = Number( this.moveForward ) - Number( this.moveBackward );
             this.direction.x = Number( this.moveRight ) - Number( this.moveLeft );
             this.direction.normalize(); // this ensures consistent movements in all directions
-            console.log(this.controls)
+
             if ( this.moveForward || this.moveBackward ) this.velocity.z -= this.direction.z * 8.0 * delta;
 
             if ( this.moveLeft || this.moveRight ) this.velocity.x -= this.direction.x * 8.0 * delta;
